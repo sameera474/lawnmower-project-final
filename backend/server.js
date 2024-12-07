@@ -26,6 +26,17 @@ mongoose
 
 const app = express();
 
+// Dynamic CORS Configuration
+const corsOptions = {
+  origin: process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(",")
+    : "*", // Allow multiple origins or "*" for all origins
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions)); // Apply the CORS middleware
+
 // Middleware
 app.use(cors());
 app.use(express.json());
