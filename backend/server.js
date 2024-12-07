@@ -3,12 +3,15 @@ process.emitWarning = () => {}; // Suppresses all warnings
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const dotenv = require("dotenv");
-const LawnData = require("./models/LawnData");
-const dataRoutes = require("./routes/data");
-const authRoutes = require("./routes/auth");
+const bcrypt = require("bcryptjs"); // Use bcryptjs instead of bcrypt
 
-dotenv.config();
+const jwt = require("jsonwebtoken");
+const User = require("./models/User"); // Assuming you have a User model
+const LawnData = require("./models/LawnData"); // Assuming you have LawnData model
+const Settings = require("./models/Settings"); // Assuming you have Settings model
+const authRoutes = require("./routes/auth"); // Import authentication routes
+const dataRoutes = require("./routes/data"); // Import data routes
+require("dotenv").config();
 
 // Ensure critical environment variables are set
 const PORT = process.env.PORT || 5000;
