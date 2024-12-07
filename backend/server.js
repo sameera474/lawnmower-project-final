@@ -11,7 +11,8 @@ const LawnData = require("./models/LawnData"); // Assuming you have LawnData mod
 const Settings = require("./models/Settings"); // Assuming you have Settings model
 const authRoutes = require("./routes/auth"); // Import authentication routes
 const dataRoutes = require("./routes/data"); // Import data routes
-require("dotenv").config();
+const dotenv = require("dotenv");
+dotenv.config();
 
 // Ensure critical environment variables are set
 const PORT = process.env.PORT || 5000;
@@ -31,20 +32,16 @@ const app = express();
 
 // Dynamic CORS Configuration
 const corsOptions = {
-  origin: (origin, callback) => {
-    if (process.env.ALLOWED_ORIGINS.split(",").includes(origin) || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(",")
+    : "*", // Allow multiple origins or "*" for all origins
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 app.use(cors(corsOptions));
 // Middleware
-app.use(cors());
+
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 
