@@ -31,15 +31,18 @@ const app = express();
 
 // Dynamic CORS Configuration
 const corsOptions = {
-  origin: process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(",")
-    : "*", // Allow multiple origins or "*" for all origins
+  origin: (origin, callback) => {
+    if (process.env.ALLOWED_ORIGINS.split(",").includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
-app.use(cors(corsOptions)); // Apply the CORS middleware
-
+app.use(cors(corsOptions));
 // Middleware
 app.use(cors());
 app.use(express.json());
