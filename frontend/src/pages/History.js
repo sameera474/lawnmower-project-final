@@ -118,6 +118,8 @@ const History = () => {
                 <TableCell>Proximity Sensors</TableCell>
                 <TableCell>Detected Objects</TableCell>
                 <TableCell>Errors</TableCell>
+                <TableCell>LiDAR Data</TableCell>
+                <TableCell>IMU Data</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -154,6 +156,25 @@ const History = () => {
                         .join("; ") || "None"}
                     </TableCell>
                     <TableCell>{sD?.error?.d || "None"}</TableCell>
+                    <TableCell>
+                      {sD?.lidar
+                        ?.map(
+                          (lidar) =>
+                            `Angle: ${lidar.a}°, Distance: ${lidar.d.toFixed(
+                              2
+                            )} m`
+                        )
+                        .join("; ") || "None"}
+                    </TableCell>
+                    <TableCell>
+                      {sD?.imu
+                        ? `Pitch: ${sD.imu.p.toFixed(
+                            2
+                          )}°, Roll: ${sD.imu.r.toFixed(
+                            2
+                          )}°, Yaw: ${sD.imu.y.toFixed(2)}°`
+                        : "None"}
+                    </TableCell>
                     <TableCell>
                       <Button
                         variant="contained"

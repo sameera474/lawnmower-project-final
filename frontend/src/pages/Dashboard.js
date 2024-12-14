@@ -14,7 +14,7 @@ import {
   Switch,
   Alert,
 } from "@mui/material";
-import { Line } from "react-chartjs-2";
+import { Line, Radar } from "react-chartjs-2";
 import BatteryChargingFullIcon from "@mui/icons-material/BatteryChargingFull";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
@@ -24,6 +24,7 @@ import SpeedIcon from "@mui/icons-material/Speed";
 import ReactSpeedometer from "react-d3-speedometer";
 import { useNavigate } from "react-router-dom";
 import { useDarkMode } from "../DarkModeContext";
+import CameraAltIcon from "@mui/icons-material/CameraAlt";
 
 import {
   Chart as ChartJS,
@@ -34,6 +35,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  RadialLinearScale,
 } from "chart.js";
 
 ChartJS.register(
@@ -43,7 +45,8 @@ ChartJS.register(
   CategoryScale,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  RadialLinearScale
 );
 
 const Dashboard = () => {
@@ -128,6 +131,37 @@ const Dashboard = () => {
       },
     ],
   });
+  // LiDAR Chart Data
+  const lidarChartData = {
+    labels: latestMetrics.lidar?.map((item) => `${item.a}°`) || [],
+    datasets: [
+      {
+        label: "LiDAR Distance (m)",
+        data: latestMetrics.lidar?.map((item) => item.d) || [],
+        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(75, 192, 192, 0.3)",
+        fill: true,
+      },
+    ],
+  };
+
+  // IMU Chart Data
+  const imuChartData = {
+    labels: ["Pitch (°)", "Roll (°)", "Yaw (°)"],
+    datasets: [
+      {
+        label: "IMU Data",
+        data: [
+          latestMetrics.imu?.p || 0,
+          latestMetrics.imu?.r || 0,
+          latestMetrics.imu?.y || 0,
+        ],
+        borderColor: "rgba(255, 99, 132, 1)",
+        backgroundColor: "rgba(255, 99, 132, 0.3)",
+        fill: true,
+      },
+    ],
+  };
 
   // Snackbar close handler
   const handleSnackbarClose = () => {
@@ -354,6 +388,50 @@ const Dashboard = () => {
               ) : (
                 <Typography>No Obstacles Detected</Typography>
               )}
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* LiDAR Data */}
+        <Grid item xs={12} sm={6} md={4}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6">LiDAR Data</Typography>
+              <Radar data={lidarChartData} />
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* IMU Data */}
+        <Grid item xs={12} sm={6} md={4}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6">IMU Data</Typography>
+              <Radar data={imuChartData} />
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* AI Camera */}
+        <Grid item xs={12} sm={6} md={4}>
+          <Card>
+            <CardContent>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <CameraAltIcon fontSize="large" />
+                <Typography variant="h6">AI Camera</Typography>
+              </Box>
+              <Typography variant="body2" sx={{ marginTop: 1 }}>
+                {latestMetrics.obj?.length
+                  ? latestMetrics.obj
+                      .map(
+                        (obj) =>
+                          `${obj.t} detected with ${
+                            obj.c
+                          }% confidence at [${obj.p.join(", ")}]`
+                      )
+                      .join("; ")
+                  : "No objects detected"}
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
